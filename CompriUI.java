@@ -66,20 +66,31 @@ public class CompriUI {
         return out;
     }
 
-    public static String[] exec(String... command) throws Exception {
-        System.out.println(String.join(" ", command));
+    public static String[] exec(String... command) {
+        String reset = "\033[0m", err = "\033[31m", cmd = "\033[34m", good = "\033[32m";
+
+        System.out.println("┌──── " + cmd + String.join(" ", command) + reset);
+        ArrayList<String> out = new ArrayList<>();
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);
-        Process process = pb.start();
-        ArrayList<String> out = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        Process process = null;
+        try {
+            process = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = br.readLine()) != null) {
                 out.add(line);
-                System.out.println(line);
+                System.out.println("│ " + line);
             }
+
+            process.waitFor();
+        } catch (Exception e) {
+            System.out.println("├ " + e.getCause());
+            System.out.println("├ " + e.getMessage());
+            e.printStackTrace();
         }
-        process.waitFor();
+
+        System.out.println("└──── " + (process == null ? (err + "null") : (process.exitValue() == 0 ? (good + process.exitValue()) : (err + process.exitValue()))) + reset);
         return out.toArray(String[]::new);
     }
 }
