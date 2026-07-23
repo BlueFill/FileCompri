@@ -15,6 +15,9 @@ public class CompriUI {
     File[] files;
     File out;
     int scale, quality;
+    boolean converting = false;
+
+    JProgressBar progress;
 
     public CompriUI() {
         scale = 50;
@@ -29,6 +32,10 @@ public class CompriUI {
         frame.add(new Button("Open Images", e -> openImages()));
         frame.add(new Button("Open Output Folder", e -> openOutput()));
         frame.add(new Button("Convert", e -> convert()));
+
+        progress = new JProgressBar(0, 0);
+        progress.setValue(0);
+        frame.add(progress);
     }
 
     public void openImages() {
@@ -37,6 +44,7 @@ public class CompriUI {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.showOpenDialog(null);
         files = chooser.getSelectedFiles();
+        progress.setMaximum(files.length);
         //for (File f : files) System.out.println(f);
     }
 
@@ -49,7 +57,17 @@ public class CompriUI {
     }
 
     public void convert() {
-        for (File f : files) convert(f);
+        if (converting) return;
+        new Thread(() -> {
+            converting = true;
+            for (int i = 0; i < files.length; i++) {
+                File f = files[i];
+                progress.setValue(i);
+                convert(f);
+            }
+            progress.setValue(0);
+            converting = false;
+        }).start();
     }
 
     public void convert(File in) {
