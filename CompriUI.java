@@ -37,7 +37,7 @@ public class CompriUI {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.showOpenDialog(null);
         files = chooser.getSelectedFiles();
-        for (File f : files) System.out.println(f);
+        //for (File f : files) System.out.println(f);
     }
 
     public void openOutput() {
@@ -53,10 +53,8 @@ public class CompriUI {
     }
 
     public void convert(File in) {
-        System.out.println("\n\nConverting: " + in.getAbsolutePath() + "\nto: " + getOutName(in));
-        try {
-            exec("/usr/bin/convert", in.getAbsolutePath(), "-size", scale + "%", "-quality", quality + "", getOutName(in));
-        } catch (Exception e) {e.printStackTrace();}
+        //System.out.println("\n\nConverting: " + in.getAbsolutePath() + "\nto: " + getOutName(in));
+        exec("/usr/bin/convert", in.getAbsolutePath(), "-size", scale + "%", "-quality", quality + "", getOutName(in));
     }
 
     public String getOutName(File in) {
@@ -85,8 +83,8 @@ public class CompriUI {
 
             process.waitFor();
         } catch (Exception e) {
-            System.out.println("├ " + e.getCause());
-            System.out.println("├ " + e.getMessage());
+            System.out.println("├──── " + e.getCause());
+            System.out.println("├──── " + e.getMessage());
             e.printStackTrace();
         }
 
