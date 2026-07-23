@@ -6,11 +6,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Beschreiben Sie hier die Klasse CompriUI.
- *
- * @author (Ihr Name)
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Doldisurround, BlueFill
+ * @version 0.2.1
  */
+
 public class CompriUI {
     File[] files;
     File out;
