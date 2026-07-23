@@ -1,39 +1,40 @@
+import com.formdev.flatlaf.FlatDarkLaf;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.io.*;
 import java.util.*;
 
 /**
- * Beschreiben Sie hier die Klasse CompriUI.
- *
- * @author (Ihr Name)
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Doldisurround, BlueFill
+ * @version 0.2.1
  */
+
 public class CompriUI {
     File[] files;
     File out;
     int scale, quality;
+    boolean converting = false;
+
+    JProgressBar progress;
 
     public CompriUI() {
         scale = 50;
         quality = 80;
 
+        FlatDarkLaf.setup();
         JFrame frame = new JFrame("Comprimizer");
         frame.setLayout(new BoxLayout(frame.getContentPane(), 1));
         frame.setSize(800, 600);
         frame.setVisible(true);
 
-        JButton buttoni = new JButton("OpenImages");
-        buttoni.addActionListener(e -> openImages());
-        frame.add(buttoni);
+        frame.add(new Button("Open Images", e -> openImages()));
+        frame.add(new Button("Open Output Folder", e -> openOutput()));
+        frame.add(new Button("Convert", e -> convert()));
 
-        JButton buttono = new JButton("OpenOutputFolder");
-        buttono.addActionListener(e -> openOutput());
-        frame.add(buttono);
-
-        JButton buttonc = new JButton("Convert");
-        buttonc.addActionListener(e -> convert());
-        frame.add(buttonc);
+        progress = new JProgressBar(0, 0);
+        progress.setValue(0);
+        frame.add(progress);
     }
 
     public void openImages() {
@@ -42,7 +43,8 @@ public class CompriUI {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.showOpenDialog(null);
         files = chooser.getSelectedFiles();
-        for (File f : files) System.out.println(f);
+        progress.setMaximum(files.length);
+        //for (File f : files) System.out.println(f);
     }
 
     public void openOutput() {
@@ -54,14 +56,22 @@ public class CompriUI {
     }
 
     public void convert() {
-        for (File f : files) convert(f);
+        if (converting) return;
+        new Thread(() -> {
+            converting = true;
+            for (int i = 0; i < files.length; i++) {
+                File f = files[i];
+                progress.setValue(i);
+                convert(f);
+            }
+            progress.setValue(0);
+            converting = false;
+        }).start();
     }
 
     public void convert(File in) {
-        System.out.println("\n\nConverting: " + in.getAbsolutePath() + "\nto: " + getOutName(in));
-        try {
-            exec("/usr/bin/convert", in.getAbsolutePath(), "-size", scale + "%", "-quality", quality + "", getOutName(in));
-        } catch (Exception e) {e.printStackTrace();}
+        //System.out.println("\n\nConverting: " + in.getAbsolutePath() + "\nto: " + getOutName(in));
+        exec("/usr/bin/convert", in.getAbsolutePath(), "-size", scale + "%", "-quality", quality + "", getOutName(in));
     }
 
     public String getOutName(File in) {
@@ -71,20 +81,31 @@ public class CompriUI {
         return out;
     }
 
-    public static String[] exec(String... command) throws Exception {
-        System.out.println(String.join(" ", command));
+    public static String[] exec(String... command) {
+        String reset = "\033[0m", err = "\033[31m", cmd = "\033[34m", good = "\033[32m";
+
+        System.out.println("┌──── " + cmd + String.join(" ", command) + reset);
+        ArrayList<String> out = new ArrayList<>();
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);
-        Process process = pb.start();
-        ArrayList<String> out = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        Process process = null;
+        try {
+            process = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = br.readLine()) != null) {
                 out.add(line);
-                System.out.println(line);
+                System.out.println("│ " + line);
             }
+
+            process.waitFor();
+        } catch (Exception e) {
+            System.out.println("├──── " + e.getCause());
+            System.out.println("├──── " + e.getMessage());
+            e.printStackTrace();
         }
-        process.waitFor();
+
+        System.out.println("└──── " + (process == null ? (err + "null") : (process.exitValue() == 0 ? (good + process.exitValue()) : (err + process.exitValue()))) + reset);
         return out.toArray(String[]::new);
     }
 }
