@@ -28,7 +28,7 @@ public class CompriUI {
 
         frame.add(new Button("Open Images", e -> openImages()));
         frame.add(new Button("Open Output Folder", e -> openOutput()));
-        frame.add(new Button("Convert", e -> openImages()));
+        frame.add(new Button("Convert", e -> convert()));
     }
 
     public void openImages() {
