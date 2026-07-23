@@ -1,3 +1,5 @@
+import com.formdev.flatlaf.FlatDarkLaf;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.io.*;
@@ -18,22 +20,15 @@ public class CompriUI {
         scale = 50;
         quality = 80;
 
+        FlatDarkLaf.setup();
         JFrame frame = new JFrame("Comprimizer");
         frame.setLayout(new BoxLayout(frame.getContentPane(), 1));
         frame.setSize(800, 600);
         frame.setVisible(true);
 
-        JButton buttoni = new JButton("OpenImages");
-        buttoni.addActionListener(e -> openImages());
-        frame.add(buttoni);
-
-        JButton buttono = new JButton("OpenOutputFolder");
-        buttono.addActionListener(e -> openOutput());
-        frame.add(buttono);
-
-        JButton buttonc = new JButton("Convert");
-        buttonc.addActionListener(e -> convert());
-        frame.add(buttonc);
+        frame.add(new Button("Open Images", e -> openImages()));
+        frame.add(new Button("Open Output Folder", e -> openOutput()));
+        frame.add(new Button("Convert", e -> openImages()));
     }
 
     public void openImages() {
