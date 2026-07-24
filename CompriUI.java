@@ -59,6 +59,7 @@ public class CompriUI {
         if (converting) return;
         new Thread(() -> {
             converting = true;
+            if (out != null) out.mkdirs();
             for (int i = 0; i < files.length; i++) {
                 File f = files[i];
                 progress.setValue(i);
