@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @author Doldisurround, BlueFill
+ * @author Doldisurround, BlueFill, Herrmoerlin
  * @version 0.2.1
  */
 
@@ -31,6 +31,8 @@ public class CompriUI {
         frame.add(new Button("Open Images", e -> openImages()));
         frame.add(new Button("Open Output Folder", e -> openOutput()));
         frame.add(new Button("Convert", e -> convert()));
+        frame.add(new Slider("Scale", 1, 100, scale, i -> scale = i).setPost("%"));
+        frame.add(new Slider("Quality", 1, 100, quality, i -> quality = i));
 
         progress = new JProgressBar(0, 0);
         progress.setValue(0);
