@@ -74,7 +74,7 @@ public class CompriUI {
 
     public void convert(File in) {
         //System.out.println("\n\nConverting: " + in.getAbsolutePath() + "\nto: " + getOutName(in));
-        exec("/usr/bin/convert", in.getAbsolutePath(), "-size", scale + "%", "-quality", quality + "", getOutName(in));
+        exec("/usr/bin/convert", in.getAbsolutePath(), "-resize", scale + "%", "-quality", quality + "", getOutName(in));
     }
 
     public String getOutName(File in) {
