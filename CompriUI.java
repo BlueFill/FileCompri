@@ -31,6 +31,7 @@ public class CompriUI {
         frame.add(new Button("Open Images", e -> openImages()));
         frame.add(new Button("Open Output Folder", e -> openOutput()));
         frame.add(new Button("Convert", e -> convert()));
+        frame.add(new Button("Merge to GIF", e -> new GifUI(this)));
         frame.add(new Slider("Scale", 1, 100, scale, i -> scale = i).setPost("%"));
         frame.add(new Slider("Quality", 1, 100, quality, i -> quality = i));
 
