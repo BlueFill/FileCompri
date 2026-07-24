@@ -1,7 +1,6 @@
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
-import javax.swing.filechooser.*;
 import java.io.*;
 import java.util.*;
 
@@ -23,8 +22,8 @@ public class CompriUI {
         quality = 80;
 
         FlatDarkLaf.setup();
-        JFrame frame = new JFrame("Comprimizer");
-        frame.setLayout(new BoxLayout(frame.getContentPane(), 1));
+        JFrame frame = new JFrame("Compromiser");
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         frame.setSize(800, 600);
         frame.setVisible(true);
 
@@ -62,7 +61,7 @@ public class CompriUI {
         if (converting) return;
         new Thread(() -> {
             converting = true;
-            if (out != null) out.mkdirs();
+            if (out != null) if (out.mkdirs()) System.out.println("Created Outputfolder");
             for (int i = 0; i < files.length; i++) {
                 File f = files[i];
                 progress.setValue(i);
@@ -85,7 +84,7 @@ public class CompriUI {
         return out;
     }
 
-    public static String[] exec(String... command) {
+    public static void exec(String... command) {
         String reset = "\033[0m", err = "\033[31m", cmd = "\033[34m", good = "\033[32m";
 
         System.out.println("┌──── " + cmd + String.join(" ", command) + reset);
@@ -106,10 +105,10 @@ public class CompriUI {
         } catch (Exception e) {
             System.out.println("├──── " + e.getCause());
             System.out.println("├──── " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         System.out.println("└──── " + (process == null ? (err + "null") : (process.exitValue() == 0 ? (good + process.exitValue()) : (err + process.exitValue()))) + reset);
-        return out.toArray(String[]::new);
+        out.toArray(String[]::new);
     }
 }
